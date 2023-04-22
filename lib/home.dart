@@ -6,7 +6,8 @@ import 'package:google_navigation_bar/tabs/person.dart';
 import 'package:google_navigation_bar/tabs/search.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  var selectedIndex;
+  HomePage({super.key, required this.selectedIndex});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -21,17 +22,28 @@ class _HomePageState extends State<HomePage> {
     'Person',
   ];
 
-  final List<Widget> _tabs = const [
-    HomeTab(),
-    FavouritesTab(),
-    SearchTab(),
-    PersonTab(),
-  ];
+  List<Widget> _tabs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedIndex = widget.selectedIndex;
+    _tabs = [
+      HomeTab(selectedIndex: 0),
+      FavouritesTab(selectedIndex: 1),
+      SearchTab(selectedIndex: 2),
+      PersonTab(selectedIndex: 3),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(_titles[_selectedIndex])),
+      appBar: AppBar(
+        title: Text(_titles[_selectedIndex]),
+        automaticallyImplyLeading: false,
+        centerTitle: true,
+      ),
       body: _tabs[_selectedIndex],
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
@@ -44,8 +56,12 @@ class _HomePageState extends State<HomePage> {
           child: Padding(
             padding: const EdgeInsets.all(10.0),
             child: GNav(
-              onTabChange: (newIndex) =>
-                  setState(() => _selectedIndex = newIndex),
+              selectedIndex: _selectedIndex,
+              onTabChange: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+              },
               curve: Curves.easeOutExpo,
               gap: 10,
               padding: const EdgeInsets.symmetric(
